@@ -7,7 +7,7 @@ services:
       context: ./node
     image: vaguiiinho/node
     container_name: app
-    entrypoint: dockerize -wait tcp://db:3306 -timeout 50s docker-entrypoint.sh
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 300s docker-entrypoint.sh
     command: nodemon index.js
     depends_on: 
      - db
