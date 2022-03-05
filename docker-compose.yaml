@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  app:
+    build:
+      context: ./node
+    image: vaguiiinho/node
+    container_name: app
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
+    command: nodemon index.js
+    depends_on: 
+     - db
+    networks: 
+      - node-nginx 
+
+  nginx:
+    build:
+      context: ./nginx
+    image: vaguiiinho/nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    networks: 
+      - node-nginx  
+
+  db:
+    build:
+      context: ./db
+    image: vaguiiinho/db
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      - node-nginx  
+networks: 
+  node-nginx:
+    driver: bridge        
